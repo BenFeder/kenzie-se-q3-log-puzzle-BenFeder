@@ -14,6 +14,8 @@ HTTP/1.0" 302 528 "-" "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US;
 rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6"
 """
 
+__author__ = "Benjamin Feder"
+
 import os
 import re
 import sys
@@ -26,8 +28,40 @@ def read_urls(filename):
     extracting the hostname from the filename itself, sorting
     alphabetically in increasing order, and screening out duplicates.
     """
-    # +++your code here+++
-    pass
+
+    puzzle_urls = []  # create empty list for puzzle URLS to go into
+    server_find = re.findall(r"_\w+", filename)  # find server name from
+    # filename
+    server_name = ""  # create empty string to add to for server name
+    for char in server_find:  # convert list containing server/host name into
+        # string
+        if char != "_":
+            server_name += char
+
+    with open(filename, "r") as puzzle_file:
+        """
+        Read each line in the file and
+        append the image URL to the list of puzzle URLs, each preceded by
+        the server name from the filename to get an accurate list of URLs
+        """
+        for line in puzzle_file:
+            if "puzzle" in line:
+                url_path_find = re.findall(r"/S/w+", line)  # find where
+                # url is in line
+                url_path = ""  # create url_path as a string instead of list
+                for char in url_path_find:
+                    url_path += char
+                puzzle_urls.append(server_name + url_path)
+
+        unique_urls = {}  # create dict to determine unique urls
+
+        for url in puzzle_urls:
+            unique_urls[url] = url
+
+        sorted_urls = sorted(unique_urls)
+
+        print(sorted_urls)
+        return sorted_urls
 
 
 def download_images(img_urls, dest_dir):
