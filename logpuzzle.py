@@ -56,6 +56,8 @@ def read_urls(filename):
         unique_urls = {}  # create dict to determine unique urls
 
         for url in puzzle_urls:
+            if url == re.findall(r"/S/w+-/w+-/w+", url):
+                unique_urls[url] = url
             unique_urls[url] = url
 
         sorted_urls = sorted(unique_urls)
@@ -72,8 +74,22 @@ def download_images(img_urls, dest_dir):
     to show each local image file.
     Creates the directory if necessary.
     """
-    # +++your code here+++
-    pass
+    if not dest_dir:
+        os.makedirs(dest_dir)
+
+    path_list = []
+
+    for i, url in enumerate(img_urls):
+        filename, headers = urllib.request.urlretrieve(url)
+        os.rename(filename, ("img" + str(i)))
+        path = os.path.join(dest_dir, ("img" + str(i)))
+        path_list.append(path)
+
+    with open("index.html", "w") as web_file:
+        web_file.write("<html><>")
+        for paths in path_list:
+            web_file.write(f'<img src="{paths}">')
+        web_file.write("</body></html>")
 
 
 def create_parser():
