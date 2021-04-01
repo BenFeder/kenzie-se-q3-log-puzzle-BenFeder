@@ -30,13 +30,8 @@ def read_urls(filename):
     """
 
     puzzle_urls = []  # create empty list for puzzle URLS to go into
-    server_find = re.findall(r"_\w+", filename)  # find server name from
+    server_name = "https://" + filename.split("_")[1]  # find server name from
     # filename
-    server_name = ""  # create empty string to add to for server name
-    for char in server_find:  # convert list containing server/host name into
-        # string
-        if char != "_":
-            server_name += char
 
     with open(filename, "r") as puzzle_file:
         """
@@ -44,26 +39,29 @@ def read_urls(filename):
         append the image URL to the list of puzzle URLs, each preceded by
         the server name from the filename to get an accurate list of URLs
         """
+        pattern = r"/edu/languages/google-python-class/images/puzzle"
+        reg = r"/\w+-\w+-?\w+"
+        full_string = pattern + reg
         for line in puzzle_file:
             if "puzzle" in line:
-                url_path_find = re.findall(r"/S/w+", line)  # find where
+                url_path_find = re.findall(full_string, line)  # find where
                 # url is in line
                 url_path = ""  # create url_path as a string instead of list
                 for char in url_path_find:
                     url_path += char
-                puzzle_urls.append(server_name + url_path)
+                puzzle_urls.append(server_name + url_path + ".jpg")
 
         unique_urls = {}  # create dict to determine unique urls
 
         for url in puzzle_urls:
-            if url == re.findall(r"/S/w+-/w+-/w+", url):
-                unique_urls[url] = url
             unique_urls[url] = url
 
         sorted_urls = sorted(unique_urls)
 
-        print(sorted_urls)
         return sorted_urls
+
+
+print(read_urls("animal_code.google.com"))
 
 
 def download_images(img_urls, dest_dir):
@@ -86,7 +84,7 @@ def download_images(img_urls, dest_dir):
         path_list.append(path)
 
     with open("index.html", "w") as web_file:
-        web_file.write("<html><>")
+        web_file.write("<html><body>")
         for paths in path_list:
             web_file.write(f'<img src="{paths}">')
         web_file.write("</body></html>")
