@@ -72,7 +72,7 @@ def download_images(img_urls, dest_dir):
     to show each local image file.
     Creates the directory if necessary.
     """
-    if not dest_dir:
+    if not os.path.isdir(dest_dir):
         os.makedirs(dest_dir)
 
     path_list = []
