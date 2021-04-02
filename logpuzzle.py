@@ -39,29 +39,21 @@ def read_urls(filename):
         append the image URL to the list of puzzle URLs, each preceded by
         the server name from the filename to get an accurate list of URLs
         """
-        pattern = r"/edu/languages/google-python-class/images/puzzle"
-        reg = r"/\w+-\w+-?\w+"
-        full_string = pattern + reg
+        pattern = r"\S+puzzle+\S+"
         for line in puzzle_file:
-            if "puzzle" in line:
-                url_path_find = re.findall(full_string, line)  # find where
-                # url is in line
-                url_path = ""  # create url_path as a string instead of list
-                for char in url_path_find:
-                    url_path += char
-                puzzle_urls.append(server_name + url_path + ".jpg")
+            url_path_find = re.search(pattern, line)  # find where
+            if url_path_find:
+                path = url_path_find.group()
+                puzzle_urls.append(server_name + path)
 
         unique_urls = {}  # create dict to determine unique urls
 
         for url in puzzle_urls:
             unique_urls[url] = url
 
-        sorted_urls = sorted(unique_urls)
+        sorted_urls = sorted(unique_urls, key=lambda u: u[-8:])
 
         return sorted_urls
-
-
-print(read_urls("animal_code.google.com"))
 
 
 def download_images(img_urls, dest_dir):
@@ -75,22 +67,14 @@ def download_images(img_urls, dest_dir):
     if not os.path.isdir(dest_dir):
         os.makedirs(dest_dir)
 
-    path_list = []
-
-    for i, url in enumerate(img_urls):
-        # add in directory name as a second parameter for urlretrieve below???
-        """
-        filename, headers = urllib.request.urlretrieve(
-        #     url)
-        # os.rename(filename, ("img" + str(i)))
-        # path = os.path.join(dest_dir, ("img" + str(i)))
-        """
-        path_list.append(url)  # was path_list.append(path)
-
     with open("index.html", "w") as web_file:
         web_file.write("<html><body>")
-        for paths in path_list:
-            web_file.write(f'<img src="{paths}">')
+
+        for i, url in enumerate(img_urls):
+            filename = f"{dest_dir}/img{i}"
+            urllib.request.urlretrieve(url, filename=filename)
+            web_file.write(f'<img src="{filename}">')
+
         web_file.write("</body></html>")
 
 
