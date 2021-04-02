@@ -78,10 +78,14 @@ def download_images(img_urls, dest_dir):
     path_list = []
 
     for i, url in enumerate(img_urls):
-        filename, headers = urllib.request.urlretrieve(url)
-        os.rename(filename, ("img" + str(i)))
-        path = os.path.join(dest_dir, ("img" + str(i)))
-        path_list.append(path)
+        # add in directory name as a second parameter for urlretrieve below???
+        """
+        filename, headers = urllib.request.urlretrieve(
+        #     url)
+        # os.rename(filename, ("img" + str(i)))
+        # path = os.path.join(dest_dir, ("img" + str(i)))
+        """
+        path_list.append(url)  # was path_list.append(path)
 
     with open("index.html", "w") as web_file:
         web_file.write("<html><body>")
