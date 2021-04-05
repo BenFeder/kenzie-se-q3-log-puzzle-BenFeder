@@ -67,13 +67,13 @@ def download_images(img_urls, dest_dir):
     if not os.path.isdir(dest_dir):
         os.makedirs(dest_dir)
 
-    with open("index.html", "w") as web_file:
+    with open(f"{dest_dir}/index.html", "w") as web_file:
         web_file.write("<html><body>")
 
         for i, url in enumerate(img_urls):
             filename = f"{dest_dir}/img{i}"
             urllib.request.urlretrieve(url, filename=filename)
-            web_file.write(f'<img src="{filename}">')
+            web_file.write(f'<img src="img{i}">')
 
         web_file.write("</body></html>")
 
