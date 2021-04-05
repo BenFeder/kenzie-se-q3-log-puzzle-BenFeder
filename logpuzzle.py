@@ -14,6 +14,8 @@ HTTP/1.0" 302 528 "-" "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US;
 rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6"
 """
 
+__author__ = "Benjamin Feder"
+
 import os
 import re
 import sys
@@ -26,8 +28,32 @@ def read_urls(filename):
     extracting the hostname from the filename itself, sorting
     alphabetically in increasing order, and screening out duplicates.
     """
-    # +++your code here+++
-    pass
+
+    puzzle_urls = []  # create empty list for puzzle URLS to go into
+    server_name = "https://" + filename.split("_")[1]  # find server name from
+    # filename
+
+    with open(filename, "r") as puzzle_file:
+        """
+        Read each line in the file and
+        append the image URL to the list of puzzle URLs, each preceded by
+        the server name from the filename to get an accurate list of URLs
+        """
+        pattern = r"\S+puzzle+\S+"
+        for line in puzzle_file:
+            url_path_find = re.search(pattern, line)  # find where
+            if url_path_find:
+                path = url_path_find.group()
+                puzzle_urls.append(server_name + path)
+
+        unique_urls = {}  # create dict to determine unique urls
+
+        for url in puzzle_urls:
+            unique_urls[url] = url
+
+        sorted_urls = sorted(unique_urls, key=lambda u: u[-8:])
+
+        return sorted_urls
 
 
 def download_images(img_urls, dest_dir):
@@ -38,8 +64,18 @@ def download_images(img_urls, dest_dir):
     to show each local image file.
     Creates the directory if necessary.
     """
-    # +++your code here+++
-    pass
+    if not os.path.isdir(dest_dir):
+        os.makedirs(dest_dir)
+
+    with open(f"{dest_dir}/index.html", "w") as web_file:
+        web_file.write("<html><body>")
+
+        for i, url in enumerate(img_urls):
+            filename = f"{dest_dir}/img{i}"
+            urllib.request.urlretrieve(url, filename=filename)
+            web_file.write(f'<img src="img{i}">')
+
+        web_file.write("</body></html>")
 
 
 def create_parser():
